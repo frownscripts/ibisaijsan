@@ -3,8 +3,13 @@ import sqlite3
 import hashlib
 import secrets
 import string
+import shutil
 from datetime import datetime, timedelta
 from typing import Optional
+
+
+BASE_DIR = os.path.dirname(__file__)
+BUNDLED_DB_PATH = os.path.join(BASE_DIR, "delta.db")
 
 def _resolve_db_path() -> str:
     # Vercel's deployment filesystem is read-only; /tmp is the writable location.
@@ -12,8 +17,15 @@ def _resolve_db_path() -> str:
     if env_path:
         return env_path
     if os.getenv("VERCEL"):
-        return "/tmp/delta.db"
-    return os.path.join(os.path.dirname(__file__), "delta.db")
+        tmp_db = "/tmp/delta.db"
+        # Seed /tmp from bundled DB once per cold start so initial data is available.
+        if os.path.exists(BUNDLED_DB_PATH) and not os.path.exists(tmp_db):
+            try:
+                shutil.copyfile(BUNDLED_DB_PATH, tmp_db)
+            except Exception:
+                pass
+        return tmp_db
+    return BUNDLED_DB_PATH
 
 
 DB_PATH = _resolve_db_path()
