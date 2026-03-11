@@ -6,7 +6,17 @@ import string
 from datetime import datetime, timedelta
 from typing import Optional
 
-DB_PATH = os.path.join(os.path.dirname(__file__), "delta.db")
+def _resolve_db_path() -> str:
+    # Vercel's deployment filesystem is read-only; /tmp is the writable location.
+    env_path = os.getenv("DB_PATH", "").strip()
+    if env_path:
+        return env_path
+    if os.getenv("VERCEL"):
+        return "/tmp/delta.db"
+    return os.path.join(os.path.dirname(__file__), "delta.db")
+
+
+DB_PATH = _resolve_db_path()
 
 
 def get_db():
