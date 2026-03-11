@@ -130,6 +130,8 @@ _used_download_jtis: set[str] = set()
 ALLOWED_ORIGINS = [
     SITE_DOMAIN,
     f"https://www.{SITE_HOST.replace('www.', '')}",
+    "https://deltapremium.site",
+    "https://www.deltapremium.site",
     f"http://{SERVER_HOST}:{APP_PORT}",
     f"https://{SERVER_HOST}",
     f"http://localhost:{APP_PORT}",
@@ -138,6 +140,8 @@ ALLOWED_ORIGINS = [
 ALLOWED_HOSTS = [
     SITE_HOST,
     f"www.{SITE_HOST.replace('www.', '')}",
+    "deltapremium.site",
+    "www.deltapremium.site",
     SERVER_HOST,
     "localhost",
     "127.0.0.1",
